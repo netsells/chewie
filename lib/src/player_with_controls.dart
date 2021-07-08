@@ -7,7 +7,12 @@ import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
 class PlayerWithControls extends StatelessWidget {
-  const PlayerWithControls({Key? key}) : super(key: key);
+  const PlayerWithControls({
+    Key? key,
+    this.isFullscreen = false,
+  }) : super(key: key);
+
+  final bool isFullscreen;
 
   @override
   Widget build(BuildContext context) {
@@ -72,15 +77,26 @@ class PlayerWithControls extends StatelessWidget {
       );
     }
 
-    return Center(
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height,
+    if (isFullscreen) {
+      return Center(
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: AspectRatio(
+            aspectRatio: _calculateAspectRatio(context),
+            child: _buildPlayerWithControls(chewieController, context),
+          ),
+        ),
+      );
+    } else {
+      return SizedBox(
         width: MediaQuery.of(context).size.width,
         child: AspectRatio(
-          aspectRatio: _calculateAspectRatio(context),
+          aspectRatio: chewieController.aspectRatio ??
+              chewieController.videoPlayerController.value.aspectRatio,
           child: _buildPlayerWithControls(chewieController, context),
         ),
-      ),
-    );
+      );
+    }
   }
 }
